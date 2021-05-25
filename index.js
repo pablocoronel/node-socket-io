@@ -26,5 +26,8 @@ io.on('connection', (socket) => {
 	// Esuchar el evento
 	socket.on('chat:message', (data) => {
 		// console.log(data);
+
+		// Todas las conexiones
+		io.sockets.emit('from-server:message', data);
 	});
 });
