@@ -1,7 +1,7 @@
 const path = require('path'); // Manejar paths independientemente del SO
 const express = require('express');
 const app = express();
-const socketIO = require('socket.io'); // Manejo de sockets
+const socketIO = require('socket.io');
 
 // Settings
 app.set('port', process.env.PORT || 3000);
@@ -15,6 +15,9 @@ const server = app.listen(app.get('port'), () => {
 });
 
 // Config de socket io
-const io = socketIO.listen(server); // Recibe un server, mantiene la conexion de sockets
+const io = socketIO(server);
 
-// Websockets
+//Websockets
+io.on('connection', () => {
+	console.log('una conexion nueva');
+});
