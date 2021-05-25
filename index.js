@@ -18,6 +18,6 @@ const server = app.listen(app.get('port'), () => {
 const io = socketIO(server);
 
 //Websockets
-io.on('connection', () => {
-	console.log('una conexion nueva');
+io.on('connection', (socket) => { // es la conexion desde chat.js
+	console.log('una conexion nueva', socket.id);
 });
