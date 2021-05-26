@@ -11,19 +11,32 @@ let actions = document.getElementById('actions');
 // Al apretar el botón "Enviar"
 button.addEventListener('click', () => {
 	const sendMsg = { username: username.value, message: message.value };
-	// console.log(sendMsg);
 
 	// Enviar datos al server
-	socket.emit('chat:message', sendMsg);
+	if (message.value !== '') {
+		socket.emit('chat:message', sendMsg);
+	}
+
+	message.value = ''; // Borrar el mensaje del campo, despues de enviarlo
 });
 
-// Mientras está escribiendo en el campo "mensaje"
-message.addEventListener('keypress', () => {
-	// De está manera queda fijo, por eso no se usa
-	// actions.innerHTML = 'Escribiendo...';
+// Mientras está escribiendo en el campo "mensaje" - Version del tutorial
+// message.addEventListener('keypress', () => {
+// 	socket.emit('chat:writing', username.value);
+// });
 
-	// Forma correcta, emitiendo
-	socket.emit('chat:writing', username.value);
+// Version con keydown y keyup - Al apretar una tecla en el campo "mensaje"
+message.addEventListener('keydown', () => {
+	socket.emit('chat:keydown', username.value);
+});
+
+message.addEventListener('keyup', () => {
+	socket.emit('chat:keyup', '');
+});
+
+message.addEventListener('focusout', () => {
+	// focusout - Al dejar el foco del campo de texto
+	socket.emit('chat:keyup', ''); // emito el mismo evento para limpiar el texto de "escribiendo..."
 });
 
 // Escuchar eventos
@@ -35,9 +48,25 @@ socket.on('from-server:message', (data) => {
 						</p>`;
 });
 
-// Al recibir el evento (de escritura)
-socket.on('from-server:writing', (data) => {
+// Al recibir el evento (de escritura) - Version del tutorial
+// socket.on('from-server:writing', (data) => {
+// 	actions.innerHTML = `<p>
+// 							${data} está escribiendo...
+// 						</p>`;
+// });
+
+// Al recibir el evento (de escritura) - con keydown y keyup
+socket.on('from-server:keydown', (data) => {
 	actions.innerHTML = `<p>
 							${data} está escribiendo...
 						</p>`;
+});
+
+let timeout = null;
+socket.on('from-server:keyup', (data) => {
+	clearTimeout(timeout);
+
+	timeout = setTimeout(() => {
+		actions.innerHTML = '';
+	}, 1000);
 });

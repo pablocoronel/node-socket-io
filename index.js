@@ -26,17 +26,23 @@ io.on('connection', (socket) => {
 	// Esuchar eventos
 	// Escuchar, al recibir un mensaje
 	socket.on('chat:message', (data) => {
-		// console.log(data);
-
 		// Todas las conexiones
 		io.sockets.emit('from-server:message', data);
 	});
 
 	// Escuchar, mientras se escribe
-	socket.on('chat:writing', (data) => {
-		// console.log(data);
+	// socket.on('chat:writing', (data) => {
 
-		// Emitir a todas las conexiones, excepto yo
-		socket.broadcast.emit('from-server:writing', data);
+	// 	// Emitir a todas las conexiones, excepto yo
+	// 	socket.broadcast.emit('from-server:writing', data);
+	// });
+
+	// Escuchar, mientras se escribe (version keydown y keyup)
+	socket.on('chat:keydown', (data) => {
+		socket.broadcast.emit('from-server:keydown', data);
+	});
+
+	socket.on('chat:keyup', (data) => {
+		socket.broadcast.emit('from-server:keyup', data);
 	});
 });
