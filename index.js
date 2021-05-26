@@ -23,11 +23,20 @@ io.on('connection', (socket) => {
 	// es la conexion desde chat.js
 	console.log('una conexion nueva', socket.id);
 
-	// Esuchar el evento
+	// Esuchar eventos
+	// Escuchar, al recibir un mensaje
 	socket.on('chat:message', (data) => {
 		// console.log(data);
 
 		// Todas las conexiones
 		io.sockets.emit('from-server:message', data);
+	});
+
+	// Escuchar, mientras se escribe
+	socket.on('chat:writing', (data) => {
+		// console.log(data);
+
+		// Emitir a todas las conexiones, excepto yo
+		socket.broadcast.emit('from-server:writing', data);
 	});
 });
